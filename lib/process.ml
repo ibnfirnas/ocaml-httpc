@@ -10,8 +10,8 @@ type process_error =
 type argument_error =
   | Invalid_prog
 
-type result =
-  (string, process_error) Result.t
+type ('ok, 'error) result =
+  [ `Ok of 'ok | `Error of 'error ]
 
 type t =
   { prog   : string
@@ -40,14 +40,14 @@ let wait {stdout; stdin; stderr; _} =
   let stdout_content = read_ic ~ic:stdout in
   let stderr_content = read_ic ~ic:stderr in
   match U.close_process_full (stdout, stdin, stderr) with
-  | U.WEXITED   0 -> Result.Ok                stdout_content
-  | U.WEXITED   n -> Result.Error (Fail   (n, stderr_content))
-  | U.WSIGNALED n -> Result.Error (Signal  n)
-  | U.WSTOPPED  n -> Result.Error (Stop    n)
+  | U.WEXITED   0 -> `Ok                stdout_content
+  | U.WEXITED   n -> `Error (Fail   (n, stderr_content))
+  | U.WSIGNALED n -> `Error (Signal  n)
+  | U.WSTOPPED  n -> `Error (Stop    n)
 
 let create ~prog ~args =
   match string_find prog ' ' with
-  | Some _ -> Result.Error Invalid_prog
+  | Some _ -> `Error Invalid_prog
   | None ->
     let cmd = S.concat (prog :: args) ~sep:" " in
     let env = U.environment () in
@@ -60,4 +60,4 @@ let create ~prog ~args =
       ; stderr
       }
     in
-    Result.Ok t
+    `Ok t

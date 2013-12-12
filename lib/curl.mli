@@ -1,1 +1,1 @@
-val get : url:string -> (string, int * string) Result.t
+val get : url:string -> [ `Ok of string | `Error of int * string ]
