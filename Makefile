@@ -1,11 +1,27 @@
-.PHONY: build clean
+EXE_TYPE := byte
+EXE_NAME := curl
+
+.PHONY: \
+	build \
+	clean \
+	clean_bin \
+	clean_manually
 
 build:
+	@ocamlbuild \
+		-cflags '-w +A' \
+		-I lib \
+		-use-ocamlfind \
+		-package unix \
+		$(EXE_NAME).$(EXE_TYPE)
 	@mkdir -p bin
-	@ocamlfind ocamlc -w A -linkpkg -package unix -o bin/curl lib/curl.ml
+	@cp _build/lib/$(EXE_NAME).$(EXE_TYPE) bin/$(EXE_NAME)
+	@rm $(EXE_NAME).$(EXE_TYPE)
 
-clean:
-	@rm -rf bin
+clean: clean_bin
+	@ocamlbuild -clean
+
+clean_manually: clean_bin
 	@find \
 		. \
 			-name '*.o' \
@@ -13,3 +29,6 @@ clean:
 		-or -name '*.cmo' \
 		-or -name '*.cmx' \
 	| xargs rm -f
+
+clean_bin:
+	@rm -rf bin/
