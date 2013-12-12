@@ -93,6 +93,9 @@ end
 
 module Curl =
 struct
+  module P = Process
+  module R = Result
+
   let get ~url =
     let prog = "curl" in
     let args =
@@ -103,9 +106,14 @@ struct
       ; url
       ]
     in
-    match Process.create ~prog ~args with
-    | Result.Error Process.Invalid_prog -> assert false
-    | Result.Ok proc -> Process.wait proc
+    match P.create ~prog ~args with
+    | R.Error P.Invalid_prog -> assert false
+    | R.Ok proc ->
+      match P.wait proc with
+      | (R.Ok _) as ok                  -> ok
+      | R.Error (P.Fail (code, stderr)) -> R.Error (code, stderr)
+      | R.Error (P.Signal     _)        -> assert false
+      | R.Error (P.Stop       _)        -> assert false
 end
 
 let () =
@@ -113,7 +121,5 @@ let () =
   let module R = Result in
   let url = Sys.argv.(1) in
   match Curl.get ~url with
-  | R.Ok                  output  -> printf  "~~~~~ OK ~~~~~\n%s\n"     output
-  | R.Error (P.Fail   (_, error)) -> eprintf "~~~~~ ERROR ~~~~~\n%s\n"  error
-  | R.Error (P.Signal     signal) -> eprintf "~~~~~ SIGNAL ~~~~~\n%d\n" signal
-  | R.Error (P.Stop       signal) -> eprintf "~~~~~ STOP ~~~~~\n%d\n"   signal
+  | R.Ok output            -> printf  "~~~ OK ~~~\n%s\n" output
+  | R.Error (code, stderr) -> eprintf "~~~ ERROR (%d) ~~~\n%s\n" code stderr
