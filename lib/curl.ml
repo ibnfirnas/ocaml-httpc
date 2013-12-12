@@ -1,9 +1,5 @@
 open Printf
 
-module B = Buffer
-module S = StringLabels
-module U = UnixLabels
-
 module Result =
 struct
   type ('ok, 'error) t =
@@ -30,6 +26,10 @@ sig
 
   val wait : t -> result
 end = struct
+  module B = Buffer
+  module S = StringLabels
+  module U = UnixLabels
+
   type process_error =
     | Fail   of int * string
     | Signal of int
@@ -62,7 +62,7 @@ end = struct
     B.contents buffer
 
   let string_find s c =
-    try Some (String.index s c) with Not_found -> None
+    try Some (S.index s c) with Not_found -> None
 
   let wait {stdout; stdin; stderr; _} =
     let stdout_content = read_ic ~ic:stdout in
