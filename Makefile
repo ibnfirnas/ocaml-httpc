@@ -1,5 +1,5 @@
 EXE_TYPE := byte
-EXE_NAME := curl
+EXE_NAME := ocaml_curl
 
 .PHONY: \
 	build \
@@ -10,12 +10,12 @@ EXE_NAME := curl
 build:
 	@ocamlbuild \
 		-cflags '-w +A' \
+		-I bin \
 		-I lib \
 		-use-ocamlfind \
 		-package unix \
 		$(EXE_NAME).$(EXE_TYPE)
-	@mkdir -p bin
-	@cp _build/lib/$(EXE_NAME).$(EXE_TYPE) bin/$(EXE_NAME)
+	@cp _build/bin/$(EXE_NAME).$(EXE_TYPE) bin/$(EXE_NAME)
 	@rm $(EXE_NAME).$(EXE_TYPE)
 
 clean: clean_bin
@@ -31,4 +31,4 @@ clean_manually: clean_bin
 	| xargs rm -f
 
 clean_bin:
-	@rm -rf bin/
+	@rm -f bin/$(EXE_NAME)
