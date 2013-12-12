@@ -13,25 +13,41 @@ end
 
 module Process :
 sig
-  type error =
-    | Invalid_exe
+  type process_error =
     | Fail   of int * string
     | Signal of int
     | Stop   of int
 
-  type result =
-    (string, error) Result.t
+  type argument_error =
+    | Invalid_prog
 
-  val run : exe:string -> args:string list -> result
+  type result =
+    (string, process_error) Result.t
+
+  type t
+
+  val create : prog:string -> args:string list -> (t, argument_error) Result.t
+
+  val wait : t -> result
 end = struct
-  type error =
-    | Invalid_exe
+  type process_error =
     | Fail   of int * string
     | Signal of int
     | Stop   of int
 
+  type argument_error =
+    | Invalid_prog
+
   type result =
-    (string, error) Result.t
+    (string, process_error) Result.t
+
+  type t =
+    { prog   : string
+    ; args   : string list
+    ; stdout : in_channel
+    ; stdin  : out_channel
+    ; stderr : in_channel
+    }
 
   let read_ic ~ic =
     let buffer = B.create 32 in
@@ -48,26 +64,37 @@ end = struct
   let string_find s c =
     try Some (String.index s c) with Not_found -> None
 
-  let run ~exe ~args =
-    match string_find exe ' ' with
-    | Some _ -> Result.Error Invalid_exe
+  let wait {stdout; stdin; stderr; _} =
+    let stdout_content = read_ic ~ic:stdout in
+    let stderr_content = read_ic ~ic:stderr in
+    match U.close_process_full (stdout, stdin, stderr) with
+    | U.WEXITED   0 -> Result.Ok                stdout_content
+    | U.WEXITED   n -> Result.Error (Fail   (n, stderr_content))
+    | U.WSIGNALED n -> Result.Error (Signal  n)
+    | U.WSTOPPED  n -> Result.Error (Stop    n)
+
+  let create ~prog ~args =
+    match string_find prog ' ' with
+    | Some _ -> Result.Error Invalid_prog
     | None ->
-      let cmd = S.concat (exe :: args) ~sep:" " in
+      let cmd = S.concat (prog :: args) ~sep:" " in
       let env = U.environment () in
       let stdout, stdin, stderr = U.open_process_full cmd ~env in
-      let stdout_content = read_ic ~ic:stdout in
-      let stderr_content = read_ic ~ic:stderr in
-      match U.close_process_full (stdout, stdin, stderr) with
-      | U.WEXITED   0 -> Result.Ok                stdout_content
-      | U.WEXITED   n -> Result.Error (Fail   (n, stderr_content))
-      | U.WSIGNALED n -> Result.Error (Signal  n)
-      | U.WSTOPPED  n -> Result.Error (Stop    n)
+      let t =
+        { prog
+        ; args
+        ; stdout
+        ; stdin
+        ; stderr
+        }
+      in
+      Result.Ok t
 end
 
 module Curl =
 struct
   let get ~url =
-    let exe = "curl" in
+    let prog = "curl" in
     let args =
       [ "-k"
       ; "-i"
@@ -76,7 +103,9 @@ struct
       ; url
       ]
     in
-    Process.run ~exe ~args
+    match Process.create ~prog ~args with
+    | Result.Error Process.Invalid_prog -> assert false
+    | Result.Ok proc -> Process.wait proc
 end
 
 let () =
@@ -88,4 +117,3 @@ let () =
   | R.Error (P.Fail   (_, error)) -> eprintf "~~~~~ ERROR ~~~~~\n%s\n"  error
   | R.Error (P.Signal     signal) -> eprintf "~~~~~ SIGNAL ~~~~~\n%d\n" signal
   | R.Error (P.Stop       signal) -> eprintf "~~~~~ STOP ~~~~~\n%d\n"   signal
-  | R.Error  P.Invalid_exe        -> assert false
