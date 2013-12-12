@@ -1,5 +1,5 @@
 EXE_TYPE := byte
-EXE_NAME := ocaml_curl
+EXE_NAME := ocaml_httpc_test
 
 .PHONY: \
 	build \
