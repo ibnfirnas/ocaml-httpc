@@ -8,14 +8,12 @@ let protocol_of_string s =
   | `Error (Protocol.Unknown p) -> eprintf "Unsupported protocol: %S" p; exit 1
 
 let method_of_string s =
-  match S.lowercase s with
-  | "delete"  -> Http_client.Request.Delete
-  | "get"     -> Http_client.Request.Get
-  | "head"    -> Http_client.Request.Head
-  | "options" -> Http_client.Request.Options
-  | "post"    -> Http_client.Request.Post
-  | "put"     -> Http_client.Request.Put
-  | m         -> eprintf "Unsupported method: %S\n" m; exit 1
+  match Http_method.of_string s with
+  | `Ok m -> m
+  | `Error Http_method.Not_supported ->
+    ( eprintf "Unsupported method: %S\n" s
+    ; exit 1
+    )
 
 let () =
   let protocol = Sys.argv.(1) |> protocol_of_string in

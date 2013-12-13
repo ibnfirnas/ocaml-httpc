@@ -1,17 +1,9 @@
 module Request :
 sig
-  type meth =
-    | Delete
-    | Get
-    | Head
-    | Options
-    | Post
-    | Put
-
   type t
 
   val make  : uri     : Uri.t
-           -> meth    : meth
+           -> meth    : Http_method.t
            -> payload : string
            -> t
 end
