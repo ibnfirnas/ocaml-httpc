@@ -8,4 +8,6 @@ sig
            -> t
 end
 
-val exec : request:Request.t -> [ `Ok of string | `Error of int * string ]
+val exec : request:Request.t -> [ `Ok    of Http_response.t
+                                | `Error of int * string
+                                ]

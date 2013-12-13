@@ -32,5 +32,5 @@ let () =
   | `Ok uri ->
     let request = Http_client.Request.make ~uri ~meth ~payload in
     match Http_client.exec ~request with
-    | `Ok out            -> printf  "~~~ OK ~~~\n%s\n" out
+    | `Ok res            -> printf  "~~~ OK ~~~\n%s\n" (res.Http_response.raw)
     | `Error (code, err) -> eprintf "~~~ ERROR (%d) ~~~\n%s\n" code err
