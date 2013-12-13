@@ -12,6 +12,7 @@ sig
   type t =
     { url     : string
     ; meth    : meth
+    ; payload : string
     }
 
   val make  : protocol : protocol
@@ -19,6 +20,7 @@ sig
            -> port     : int
            -> path     : string list
            -> meth     : meth
+           -> payload  : string
            -> t
 end = struct
   module S = StringLabels
@@ -33,6 +35,7 @@ end = struct
   type t =
     { url     : string
     ; meth    : meth
+    ; payload : string
     }
 
   let protocol_to_string = function
@@ -45,17 +48,18 @@ end = struct
     let parts = (sprintf "%s://%s:%d" protocol hostname port) :: path in
     S.concat parts ~sep:"/"
 
-  let make ~protocol ~hostname ~port ~path ~meth =
+  let make ~protocol ~hostname ~port ~path ~meth ~payload =
     let url = make_url ~protocol ~hostname ~port ~path in
     { url
     ; meth
+    ; payload
     }
 end
 
 module P = Process
 module R = Request
 
-let exec ~request:{R.url; R.meth} =
+let exec ~request:{R.url; R.meth; R.payload} =
   let method_to_string = function
     | R.Get    -> "GET"
   in
@@ -66,6 +70,8 @@ let exec ~request:{R.url; R.meth} =
     ; "-X"
     ; method_to_string meth
     ; url
+    ; "-d"
+    ; sprintf "%S" payload  (* TODO: Test nested quoting *)
     ]
   in
   match P.create ~prog ~args with

@@ -14,6 +14,7 @@ sig
            -> port     : int
            -> path     : string list
            -> meth     : meth
+           -> payload  : string
            -> t
 end
 
