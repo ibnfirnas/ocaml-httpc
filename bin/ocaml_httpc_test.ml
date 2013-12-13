@@ -11,12 +11,12 @@ let protocol_of_string s =
 let method_of_string s =
   match S.lowercase s with
   | "delete"  -> Httpc.Request.Delete
-  | "get"    -> Httpc.Request.Get
+  | "get"     -> Httpc.Request.Get
   | "head"    -> Httpc.Request.Head
   | "options" -> Httpc.Request.Options
   | "post"    -> Httpc.Request.Post
   | "put"     -> Httpc.Request.Put
-  | _        -> assert false
+  | _         -> assert false
 
 let () =
   let protocol = Sys.argv.(1) |> protocol_of_string in
