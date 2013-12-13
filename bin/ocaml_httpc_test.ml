@@ -3,10 +3,9 @@ open Printf
 module S = StringLabels
 
 let protocol_of_string s =
-  match S.lowercase s with
-  | "https" -> Httpc.Request.Https
-  | "http"  -> Httpc.Request.Http
-  | p       -> eprintf "Unsupported protocol: %S" p; exit 1
+  match Protocol.of_string s with
+  | `Ok p -> p
+  | `Error (Protocol.Unknown p) -> eprintf "Unsupported protocol: %S" p; exit 1
 
 let method_of_string s =
   match S.lowercase s with

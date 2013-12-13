@@ -1,9 +1,5 @@
 module Request :
 sig
-  type protocol =
-    | Http
-    | Https
-
   type meth =
     | Delete
     | Get
@@ -14,7 +10,7 @@ sig
 
   type t
 
-  val make  : protocol : protocol
+  val make  : protocol : Protocol.t
            -> hostname : string
            -> port     : int
            -> path     : string list

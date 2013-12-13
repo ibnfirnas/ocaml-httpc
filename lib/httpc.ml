@@ -2,10 +2,6 @@ open Printf
 
 module Request :
 sig
-  type protocol =
-    | Http
-    | Https
-
   type meth =
     | Delete
     | Get
@@ -20,7 +16,7 @@ sig
     ; payload : string
     }
 
-  val make  : protocol : protocol
+  val make  : protocol : Protocol.t
            -> hostname : string
            -> port     : int
            -> path     : string list
@@ -30,10 +26,6 @@ sig
 end = struct
   module S = StringLabels
 
-  type protocol =
-    | Http
-    | Https
-
   type meth =
     | Delete
     | Get
@@ -48,13 +40,9 @@ end = struct
     ; payload : string
     }
 
-  let protocol_to_string = function
-    | Http  -> "http"
-    | Https -> "https"
-
   let make_url ~protocol ~hostname ~port ~path =
     (* TODO: Validation *)
-    let protocol = protocol_to_string protocol in
+    let protocol = Protocol.to_string protocol in
     let parts = (sprintf "%s://%s:%d" protocol hostname port) :: path in
     S.concat parts ~sep:"/"
 
