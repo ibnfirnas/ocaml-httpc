@@ -1,5 +1,5 @@
 EXE_TYPE := byte
-EXE_NAME := ocaml_httpc_test
+EXE_NAME := http_client_example
 PACKAGES := str,unix
 
 .PHONY: \
