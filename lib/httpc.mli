@@ -11,7 +11,7 @@ sig
   type t
 
   val make  : protocol : Protocol.t
-           -> hostname : string
+           -> domain   : string
            -> port     : int
            -> path     : string list
            -> meth     : meth

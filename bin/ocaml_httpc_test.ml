@@ -19,13 +19,13 @@ let method_of_string s =
 
 let () =
   let protocol = Sys.argv.(1) |> protocol_of_string in
-  let hostname = Sys.argv.(2) in
+  let domain   = Sys.argv.(2) in
   let port     = Sys.argv.(3) |> int_of_string in
   let path     = Sys.argv.(4) |> Str.split (Str.regexp "/") in
   let meth     = Sys.argv.(5) |> method_of_string in
   let payload  = Sys.argv.(6) in
   let request =
-    Httpc.Request.make ~protocol ~hostname ~port ~path ~meth ~payload
+    Httpc.Request.make ~protocol ~domain ~port ~path ~meth ~payload
   in
   match Httpc.exec ~request with
   | `Ok out            -> printf  "~~~ OK ~~~\n%s\n" out
