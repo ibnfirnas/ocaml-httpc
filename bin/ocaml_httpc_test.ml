@@ -6,7 +6,7 @@ let protocol_of_string s =
   match S.lowercase s with
   | "https" -> Httpc.Request.Https
   | "http"  -> Httpc.Request.Http
-  | _       -> assert false
+  | p       -> eprintf "Unsupported protocol: %S" p; exit 1
 
 let method_of_string s =
   match S.lowercase s with
@@ -16,7 +16,7 @@ let method_of_string s =
   | "options" -> Httpc.Request.Options
   | "post"    -> Httpc.Request.Post
   | "put"     -> Httpc.Request.Put
-  | _         -> assert false
+  | m         -> eprintf "Unsupported method: %S\n" m; exit 1
 
 let () =
   let protocol = Sys.argv.(1) |> protocol_of_string in
