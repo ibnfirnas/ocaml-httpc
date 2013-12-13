@@ -1,7 +1,27 @@
 open Printf
 
+module S = StringLabels
+
+let protocol_of_string s =
+  match S.lowercase s with
+  | "https" -> Httpc.Request.Https
+  | "http"  -> Httpc.Request.Http
+  | _       -> assert false
+
+let method_of_string s =
+  match S.lowercase s with
+  | "get"    -> Httpc.Request.Get
+  | _        -> assert false
+
 let () =
-  let url = Sys.argv.(1) in
-  match Httpc.get ~url with
+  let protocol = Sys.argv.(1) |> protocol_of_string in
+  let hostname = Sys.argv.(2) in
+  let port     = Sys.argv.(3) |> int_of_string in
+  let path     = Sys.argv.(4) |> Str.split (Str.regexp "/") in
+  let meth     = Sys.argv.(5) |> method_of_string in
+  let request =
+    Httpc.Request.make ~protocol ~hostname ~port ~path ~meth
+  in
+  match Httpc.exec ~request with
   | `Ok out            -> printf  "~~~ OK ~~~\n%s\n" out
   | `Error (code, err) -> eprintf "~~~ ERROR (%d) ~~~\n%s\n" code err

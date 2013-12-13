@@ -1,5 +1,6 @@
 EXE_TYPE := byte
 EXE_NAME := ocaml_httpc_test
+PACKAGES := str,unix
 
 .PHONY: \
 	build \
@@ -13,7 +14,7 @@ build:
 		-I bin \
 		-I lib \
 		-use-ocamlfind \
-		-package unix \
+		-package $(PACKAGES) \
 		$(EXE_NAME).$(EXE_TYPE)
 	@cp _build/bin/$(EXE_NAME).$(EXE_TYPE) bin/$(EXE_NAME)
 	@rm $(EXE_NAME).$(EXE_TYPE)
