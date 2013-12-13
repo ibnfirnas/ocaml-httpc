@@ -42,7 +42,7 @@ let exec ~request:{R.url; R.meth; R.payload} =
     ; "--request"   (* -X Specifies a custom request method to use *)
     ; Http_method.to_string meth
     ; url
-    ; "--data"      (* -d Sends the specified data in a POST request *)
+    ; "--data-binary"  (* -d Posts data exactly as specified, no extra processing *)
     ; sprintf "%S" payload  (* TODO: Test nested quoting *)
     ]
   in
