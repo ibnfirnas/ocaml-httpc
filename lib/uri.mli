@@ -1,3 +1,11 @@
+(*****************************************************************************)
+(*                                                                           *)
+(* http://www.w3.org/TR/uri-clarification/                                   *)
+(*                                                                           *)
+(* http://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml             *)
+(*                                                                           *)
+(*****************************************************************************)
+
 module Scheme_http :
 sig
   type t
