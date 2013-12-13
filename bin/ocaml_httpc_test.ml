@@ -10,7 +10,12 @@ let protocol_of_string s =
 
 let method_of_string s =
   match S.lowercase s with
+  | "delete"  -> Httpc.Request.Delete
   | "get"    -> Httpc.Request.Get
+  | "head"    -> Httpc.Request.Head
+  | "options" -> Httpc.Request.Options
+  | "post"    -> Httpc.Request.Post
+  | "put"     -> Httpc.Request.Put
   | _        -> assert false
 
 let () =

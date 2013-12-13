@@ -7,7 +7,12 @@ sig
     | Https
 
   type meth =
+    | Delete
     | Get
+    | Head
+    | Options
+    | Post
+    | Put
 
   type t =
     { url     : string
@@ -30,7 +35,12 @@ end = struct
     | Https
 
   type meth =
+    | Delete
     | Get
+    | Head
+    | Options
+    | Post
+    | Put
 
   type t =
     { url     : string
@@ -61,7 +71,12 @@ module R = Request
 
 let exec ~request:{R.url; R.meth; R.payload} =
   let method_to_string = function
+    | R.Delete  -> "DELETE"
     | R.Get    -> "GET"
+    | R.Head    -> "HEAD"
+    | R.Options -> "OPTIONS"
+    | R.Post    -> "POST"
+    | R.Put     -> "PUT"
   in
   let prog = "curl" in
   let args =

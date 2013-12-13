@@ -5,7 +5,12 @@ sig
     | Https
 
   type meth =
+    | Delete
     | Get
+    | Head
+    | Options
+    | Post
+    | Put
 
   type t
 
