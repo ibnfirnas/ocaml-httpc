@@ -35,12 +35,12 @@ module R = Request
 let exec ~request:{R.url; R.meth; R.payload} =
   let prog = "curl" in
   let args =
-    [ "-k"
-    ; "-i"
-    ; "-X"
+    [ "--insecure"
+    ; "--include"
+    ; "--request"
     ; Http_method.to_string meth
     ; url
-    ; "-d"
+    ; "--data"
     ; sprintf "%S" payload  (* TODO: Test nested quoting *)
     ]
   in
