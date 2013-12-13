@@ -16,12 +16,9 @@ sig
     ; payload : string
     }
 
-  val make  : protocol : Protocol.t
-           -> domain   : string
-           -> port     : int
-           -> path     : string list
-           -> meth     : meth
-           -> payload  : string
+  val make  : uri     : Uri.t
+           -> meth    : meth
+           -> payload : string
            -> t
 end = struct
   module S = StringLabels
@@ -40,14 +37,8 @@ end = struct
     ; payload : string
     }
 
-  let make_url ~protocol ~domain ~port ~path =
-    (* TODO: Validation *)
-    let protocol = Protocol.to_string protocol in
-    let parts = (sprintf "%s://%s:%d" protocol domain port) :: path in
-    S.concat parts ~sep:"/"
-
-  let make ~protocol ~domain ~port ~path ~meth ~payload =
-    let url = make_url ~protocol ~domain ~port ~path in
+  let make ~uri ~meth ~payload =
+    let url = Uri.to_string uri in
     { url
     ; meth
     ; payload

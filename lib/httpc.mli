@@ -10,12 +10,9 @@ sig
 
   type t
 
-  val make  : protocol : Protocol.t
-           -> domain   : string
-           -> port     : int
-           -> path     : string list
-           -> meth     : meth
-           -> payload  : string
+  val make  : uri     : Uri.t
+           -> meth    : meth
+           -> payload : string
            -> t
 end
 

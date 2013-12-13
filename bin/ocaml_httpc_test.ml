@@ -24,9 +24,15 @@ let () =
   let path     = Sys.argv.(4) |> Str.split (Str.regexp "/") in
   let meth     = Sys.argv.(5) |> method_of_string in
   let payload  = Sys.argv.(6) in
-  let request =
-    Httpc.Request.make ~protocol ~domain ~port ~path ~meth ~payload
-  in
-  match Httpc.exec ~request with
-  | `Ok out            -> printf  "~~~ OK ~~~\n%s\n" out
-  | `Error (code, err) -> eprintf "~~~ ERROR (%d) ~~~\n%s\n" code err
+  match Uri.make ~protocol ~domain ~port ~path with
+  | `Error (`Domain c) ->
+    eprintf "Illegal character in domain: %C\n" c;
+    exit 1
+  | `Error (`Path c) ->
+    eprintf "Illegal character in path: %C\n" c;
+    exit 1
+  | `Ok uri ->
+    let request = Httpc.Request.make ~uri ~meth ~payload in
+    match Httpc.exec ~request with
+    | `Ok out            -> printf  "~~~ OK ~~~\n%s\n" out
+    | `Error (code, err) -> eprintf "~~~ ERROR (%d) ~~~\n%s\n" code err
