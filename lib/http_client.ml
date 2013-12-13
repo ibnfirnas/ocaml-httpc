@@ -32,15 +32,17 @@ end
 module P = Process
 module R = Request
 
+(* TODO: Support timeouts *)
+
 let exec ~request:{R.url; R.meth; R.payload} =
   let prog = "curl" in
   let args =
-    [ "--insecure"
-    ; "--include"
-    ; "--request"
+    [ "--insecure"  (* -k Do not validate SSL certificate *)
+    ; "--include"   (* -i Include the HTTP-header in the output *)
+    ; "--request"   (* -X Specifies a custom request method to use *)
     ; Http_method.to_string meth
     ; url
-    ; "--data"
+    ; "--data"      (* -d Sends the specified data in a POST request *)
     ; sprintf "%S" payload  (* TODO: Test nested quoting *)
     ]
   in
