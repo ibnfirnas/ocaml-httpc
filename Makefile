@@ -4,20 +4,24 @@ PACKAGES := str,unix
 
 .PHONY: \
 	build \
+	make_bin \
 	clean \
 	clean_bin \
 	clean_manually
 
-build:
+build: make_bin
 	@ocamlbuild \
 		-cflags '-w +A' \
-		-I bin \
+		-I examples \
 		-I lib \
 		-use-ocamlfind \
 		-package $(PACKAGES) \
 		$(EXE_NAME).$(EXE_TYPE)
-	@cp _build/bin/$(EXE_NAME).$(EXE_TYPE) bin/$(EXE_NAME)
+	@cp _build/examples/$(EXE_NAME).$(EXE_TYPE) bin/$(EXE_NAME)
 	@rm $(EXE_NAME).$(EXE_TYPE)
+
+make_bin:
+	@mkdir -p bin
 
 clean: clean_bin
 	@ocamlbuild -clean
@@ -32,4 +36,4 @@ clean_manually: clean_bin
 	| xargs rm -f
 
 clean_bin:
-	@rm -f bin/$(EXE_NAME)
+	@rm -rf bin
