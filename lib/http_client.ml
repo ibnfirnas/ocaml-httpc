@@ -39,24 +39,58 @@ let exec ~request:{R.url; R.meth; R.payload} =
   let payload = sprintf "%S" payload in  (* TODO: Test nested quoting *)
   let prog = "curl" in
   let args =
-    (* -k Do not validate SSL certificate *)
+    (* (SSL) This option explicitly allows curl to perform "insecure" SSL
+     * connections and transfers. All SSL connections are attempted to be made
+     * secure by using the CA certificate bundle installed by default. This
+     * makes all connections considered "insecure" fail unless -k, --insecure is
+     * used.
+     *
+     * SHORT: -k
+     * *)
     [ "--insecure"
 
-    (* -i Include the HTTP-header in the output *)
+    (* (HTTP) Include the HTTP-header in the output. The HTTP-header includes
+     * things like server-name, date of the document, HTTP-version and more...
+     *
+     * SHORT: -i
+     * *)
     ; "--include"
 
     (* When used, it disables all internal HTTP decoding of content or transfer
      * encodings and instead makes them passed on unaltered, raw. (Added in
      * 7.16.2)
+     *
+     * NO SHORT
      * *)
     ; "--raw"
 
-    (* -X Specifies a custom request method to use *)
+    (* (HTTP) Specifies a custom request method to use when communicating with
+     * the HTTP server. The specified request will be used instead of the method
+     * otherwise used (which defaults to GET).
+     *
+     * If this option is used several times, the last one will be used.
+     *
+     * SHORT: -X
+     * *)
     ; "--request"; meth
 
+    (* Endpoint *)
     ; url
 
-    (* -d Posts data exactly as specified, no extra processing *)
+    (* (HTTP) This posts data exactly as specified with no extra processing
+     * whatsoever.
+     *
+     * If you start the data with the letter @, the rest should be a filename.
+     * TODO: Maybe check that given data does NOT start with "@"?
+     *
+     * Data is posted in a similar manner as --data-ascii does, except that
+     * newlines are preserved and conversions are never done.
+     *
+     * If this option is used several times, the ones following the first will
+     * append data as described in -d, --data.
+     *
+     * SHORT: -d
+     * *)
     ; "--data-binary"; payload
     ]
   in
