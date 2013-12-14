@@ -35,15 +35,23 @@ module R = Request
 (* TODO: Support timeouts *)
 
 let exec ~request:{R.url; R.meth; R.payload} =
+  let meth = Http_method.to_string meth in
+  let payload = sprintf "%S" payload in  (* TODO: Test nested quoting *)
   let prog = "curl" in
   let args =
-    [ "--insecure"  (* -k Do not validate SSL certificate *)
-    ; "--include"   (* -i Include the HTTP-header in the output *)
-    ; "--request"   (* -X Specifies a custom request method to use *)
-    ; Http_method.to_string meth
+    (* -k Do not validate SSL certificate *)
+    [ "--insecure"
+
+    (* -i Include the HTTP-header in the output *)
+    ; "--include"
+
+    (* -X Specifies a custom request method to use *)
+    ; "--request"; meth
+
     ; url
-    ; "--data-binary"  (* -d Posts data exactly as specified, no extra processing *)
-    ; sprintf "%S" payload  (* TODO: Test nested quoting *)
+
+    (* -d Posts data exactly as specified, no extra processing *)
+    ; "--data-binary"; payload
     ]
   in
   match P.create ~prog ~args with
