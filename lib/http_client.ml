@@ -99,7 +99,12 @@ let exec ~request:{R.url; R.meth; R.payload} =
   | `Ok proc ->
     match P.wait proc with
     | `Ok output                     -> `Ok (Http_response.of_string output)
+
     (* TODO: Convert (some) curl exit codes to variants *)
+
+    (* Unsupported protocol. *)
+    | `Error (P.Fail (1   , _))      -> assert false
+
     | `Error (P.Fail (code, stderr)) -> `Error (code, stderr)
     | `Error (P.Signal     _)        -> assert false
     | `Error (P.Stop       _)        -> assert false
