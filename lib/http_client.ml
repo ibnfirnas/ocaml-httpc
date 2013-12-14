@@ -45,6 +45,12 @@ let exec ~request:{R.url; R.meth; R.payload} =
     (* -i Include the HTTP-header in the output *)
     ; "--include"
 
+    (* When used, it disables all internal HTTP decoding of content or transfer
+     * encodings and instead makes them passed on unaltered, raw. (Added in
+     * 7.16.2)
+     * *)
+    ; "--raw"
+
     (* -X Specifies a custom request method to use *)
     ; "--request"; meth
 
