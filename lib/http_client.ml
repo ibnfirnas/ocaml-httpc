@@ -105,6 +105,9 @@ let exec ~request:{R.url; R.meth; R.payload} =
     (* Unsupported protocol. *)
     | `Error (P.Fail (1   , _))      -> assert false
 
+    (* URL malformed. The syntax was not correct. *)
+    | `Error (P.Fail (3   , _))      -> assert false
+
     | `Error (P.Fail (code, stderr)) -> `Error (code, stderr)
     | `Error (P.Signal     _)        -> assert false
     | `Error (P.Stop       _)        -> assert false
