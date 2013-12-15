@@ -2,12 +2,14 @@ type parse_error =
   | Not_supported
 
 type t =
+  | CONNECT
   | DELETE
   | GET
   | HEAD
   | OPTIONS
   | POST
   | PUT
+  | TRACE
 
 val to_string : t -> string
 
