@@ -2,7 +2,7 @@ type t =
   { http_vsn      : string
   ; status_code   : int
   ; reason_phrase : string
-  ; headers       : (string * string) list
+  ; headers       : Http_headers.t
   ; body          : string
   ; raw           : string
   }

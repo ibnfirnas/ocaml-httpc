@@ -2,19 +2,20 @@ type t =
   { http_vsn      : string
   ; status_code   : int
   ; reason_phrase : string
-  ; headers       : (string * string) list
+  ; headers       : Http_headers.t
   ; body          : string
   ; raw           : string
   }
 
 let parse response_text =
   let module HRL = Http_response_lexer in
+  let module HD = Http_headers in
   let lexbuf = Lexing.from_string response_text in
   let body = Buffer.create 32 in
   let rec parse ~status ~headers =
     match HRL.parse_response lexbuf with
     | HRL.STATUS_LINE s -> parse ~status:(Some s) ~headers
-    | HRL.HEADER      h -> parse ~status          ~headers:(h :: headers)
+    | HRL.HEADER (n, v) -> parse ~status ~headers:(HD.set headers ~name:n ~value:v)
     | HRL.CRLF          -> parse ~status          ~headers
     | HRL.BODY_PART   b ->
       begin
@@ -24,7 +25,7 @@ let parse response_text =
     | HRL.EOF ->
       status , headers , (Buffer.contents body)
   in
-  parse ~status:None ~headers:[]
+  parse ~status:None ~headers:HD.empty
 
 let of_string s =
   match parse s with
