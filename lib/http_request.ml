@@ -1,40 +1,24 @@
 open Printf
 
-module Request :
-sig
-  type t =
-    { url     : string
-    ; meth    : Http_method.t
-    ; payload : string
-    }
-
-  val make  : uri     : Uri.t
-           -> meth    : Http_method.t
-           -> payload : string
-           -> t
-end = struct
-  module S = StringLabels
-
-  type t =
-    { url     : string
-    ; meth    : Http_method.t
-    ; payload : string
-    }
-
-  let make ~uri ~meth ~payload =
-    let url = Uri.to_string uri in
-    { url
-    ; meth
-    ; payload
-    }
-end
-
 module P = Process
-module R = Request
+module S = StringLabels
+
+type t =
+  { url     : string
+  ; meth    : Http_method.t
+  ; payload : string
+  }
+
+let make ~uri ~meth ~payload =
+  let url = Uri.to_string uri in
+  { url
+  ; meth
+  ; payload
+  }
 
 (* TODO: Support timeouts *)
 
-let exec ~request:{R.url; R.meth; R.payload} =
+let send {url; meth; payload} =
   let meth = Http_method.to_string meth in
   let payload = sprintf "%S" payload in  (* TODO: Test nested quoting *)
   let prog = "curl" in

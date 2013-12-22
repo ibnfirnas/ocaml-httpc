@@ -32,13 +32,13 @@ let () =
     exit 1
   | `Ok uri ->
     let module P = Http_response in
+    let module Q = Http_request in
     let module H = Http_headers in
     let str_of_stropt = function
       | Some s -> "SOME " ^ s
       | None   -> "NONE"
     in
-    let request = Http_client.Request.make ~uri ~meth ~payload in
-    match Http_client.exec ~request with
+    match Q.send (Q.make ~uri ~meth ~payload) with
     | `Ok p -> begin
       ( printf "~~~ OK ~~~\n"
       ; printf "BEGIN RAW\n"
