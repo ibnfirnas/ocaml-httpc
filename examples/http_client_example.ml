@@ -33,11 +33,7 @@ let () =
   | `Ok uri ->
     let module P = Http_response in
     let module Q = Http_request in
-    let module H = Http_headers in
-    let str_of_stropt = function
-      | Some s -> "SOME " ^ s
-      | None   -> "NONE"
-    in
+    let module H = Http_header in
     match Q.send (Q.make ~uri ~meth ~payload) with
     | `Ok p -> begin
       ( printf "~~~ OK ~~~\n"
@@ -49,19 +45,7 @@ let () =
       ; printf "  STATUS CODE: %d\n" (p.P.status_code)
       ; printf "  REASON PHRASE: %s\n" (p.P.reason_phrase)
       ; printf "  BEGIN HEADERS\n"
-      ; printf "    connection: %s\n" (str_of_stropt p.P.headers.H.connection)
-      ; printf "    server: %s\n" (str_of_stropt p.P.headers.H.server)
-      ; printf "    date: %s\n" (str_of_stropt p.P.headers.H.date)
-      ; printf "    content-length: %s\n" (str_of_stropt p.P.headers.H.content_length)
-      ; printf "    content-type: %s\n" (str_of_stropt p.P.headers.H.content_type)
-      ; printf "    BEGIN HEADERS OTHER\n"
-      ; L.iter p.P.headers.H.other ~f:(
-          fun (n, v) ->
-            ( printf "       NAME: %s\n" n
-            ; printf "      VALUE: %s\n\n" v
-            )
-        )
-      ; printf "    END HEADERS OTHER\n"
+      ; L.iter p.P.headers ~f:(fun h -> printf "    %s" (H.to_string h))
       ; printf "  END HEADERS\n"
       ; printf "  BODY: %s\n" p.P.body
       ; printf "END PARSED\n"
