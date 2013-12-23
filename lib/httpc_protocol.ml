@@ -1,5 +1,3 @@
-module S = StringLabels
-
 type parse_error =
   | Unknown of string
 
@@ -12,7 +10,7 @@ let to_string = function
   | Https -> "https"
 
 let of_string s =
-  match S.lowercase s with
+  match String.lowercase s with
   | "https" -> `Ok Https
   | "http"  -> `Ok Http
   | p       -> `Error (Unknown p)

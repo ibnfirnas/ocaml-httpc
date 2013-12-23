@@ -1,9 +1,5 @@
 open Printf
 
-module L = ListLabels
-module S = StringLabels
-module Tbl = MoreLabels.Hashtbl
-
 type name =
   | Accept
   | Accept_charset
@@ -59,7 +55,7 @@ type value = string
 type t = name * value
 
 let make ~name ~value =
-  let name = S.lowercase name in
+  let name = String.lowercase name in
   match name with
   | "accept"              -> Accept               , value
   | "accept-charset"      -> Accept_charset       , value

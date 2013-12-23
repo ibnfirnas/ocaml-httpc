@@ -1,5 +1,3 @@
-module S = StringLabels
-
 type parse_error =
   | Not_supported
 
@@ -24,7 +22,7 @@ let to_string = function
   | TRACE   -> "TRACE"
 
 let of_string s =
-  match S.uppercase s with
+  match String.uppercase s with
   | "CONNECT" -> `Ok CONNECT
   | "DELETE"  -> `Ok DELETE
   | "GET"     -> `Ok GET
