@@ -2,14 +2,14 @@ type t =
   { http_vsn      : string
   ; status_code   : int
   ; reason_phrase : string
-  ; headers       : Http_header.t list
+  ; headers       : Httpc_header.t list
   ; body          : string
   ; raw           : string
   }
 
 let parse response_text =
-  let module HRL = Http_response_lexer in
-  let module HD = Http_header in
+  let module HRL = Httpc_response_lexer in
+  let module HD = Httpc_header in
   let lexbuf = Lexing.from_string response_text in
   let body = Buffer.create 32 in
   let rec parse ~status ~headers =

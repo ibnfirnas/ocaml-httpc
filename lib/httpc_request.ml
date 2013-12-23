@@ -1,16 +1,16 @@
 open Printf
 
-module P = Process
+module P = Httpc_process
 module S = StringLabels
 
 type t =
   { url     : string
-  ; meth    : Http_method.t
+  ; meth    : Httpc_method.t
   ; payload : string
   }
 
 let make ~uri ~meth ~payload =
-  let url = Uri.to_string uri in
+  let url = Httpc_uri.to_string uri in
   { url
   ; meth
   ; payload
@@ -19,7 +19,7 @@ let make ~uri ~meth ~payload =
 (* TODO: Support timeouts *)
 
 let send {url; meth; payload} =
-  let meth = Http_method.to_string meth in
+  let meth = Httpc_method.to_string meth in
   let payload = sprintf "%S" payload in  (* TODO: Test nested quoting *)
   let prog = "curl" in
   let args =
@@ -82,7 +82,7 @@ let send {url; meth; payload} =
   | `Error P.Invalid_prog -> assert false
   | `Ok proc ->
     match P.wait proc with
-    | `Ok output                     -> `Ok (Http_response.of_string output)
+    | `Ok output                     -> `Ok (Httpc_response.of_string output)
 
     (* TODO: Convert (some) curl exit codes to variants *)
 

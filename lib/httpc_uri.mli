@@ -16,7 +16,7 @@ type t =
 
 val to_string : t -> string
 
-val make  : protocol : Protocol.t
+val make  : protocol : Httpc_protocol.t
          -> domain   : string
          -> port     : int
          -> path     : string list

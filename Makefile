@@ -1,5 +1,5 @@
 EXE_TYPE := byte
-EXE_NAME := http_client_example
+EXE_NAME := httpc_example
 PACKAGES := str,unix
 
 .PHONY: \

@@ -41,6 +41,6 @@ let to_string = function
 let make ~protocol ~domain ~port ~path =
   (* TODO: Validation *)
   match protocol with
-  | Protocol.Http | Protocol.Https ->
-    let protocol = Protocol.to_string protocol in
+  | Httpc_protocol.Http | Httpc_protocol.Https ->
+    let protocol = Httpc_protocol.to_string protocol in
     `Ok (Http (Scheme_http.make ~protocol ~domain ~port ~path))
