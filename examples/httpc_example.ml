@@ -4,14 +4,14 @@ module L = ListLabels
 module S = StringLabels
 
 let protocol_of_string s =
-  match Httpc_protocol.of_string s with
+  match Httpc.Protocol.of_string s with
   | `Ok p -> p
-  | `Error (Httpc_protocol.Unknown p) -> eprintf "Unsupported protocol: %S" p; exit 1
+  | `Error (Httpc.Protocol.Unknown p) -> eprintf "Unsupported protocol: %S" p; exit 1
 
 let method_of_string s =
-  match Httpc_method.of_string s with
+  match Httpc.Method.of_string s with
   | `Ok m -> m
-  | `Error Httpc_method.Not_supported ->
+  | `Error Httpc.Method.Not_supported ->
     ( eprintf "Unsupported method: %S\n" s
     ; exit 1
     )
@@ -23,7 +23,7 @@ let () =
   let path     = Sys.argv.(4) |> Str.split (Str.regexp "/") in
   let meth     = Sys.argv.(5) |> method_of_string in
   let payload  = Sys.argv.(6) in
-  match Httpc_uri.make ~protocol ~domain ~port ~path with
+  match Httpc.Uri.make ~protocol ~domain ~port ~path with
   | `Error (`Domain c) ->
     eprintf "Illegal character in domain: %C\n" c;
     exit 1
@@ -31,9 +31,9 @@ let () =
     eprintf "Illegal character in path: %C\n" c;
     exit 1
   | `Ok uri ->
-    let module P = Httpc_response in
-    let module Q = Httpc_request in
-    let module H = Httpc_header in
+    let module P = Httpc.Response in
+    let module Q = Httpc.Request in
+    let module H = Httpc.Header in
     match Q.send (Q.make ~uri ~meth ~payload) with
     | `Ok p -> begin
       ( printf "~~~ OK ~~~\n"
