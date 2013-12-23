@@ -7,24 +7,28 @@ type t =
   ; raw           : string
   }
 
+
 let parse response_text =
   let module HRL = Httpc_response_lexer in
-  let module HD = Httpc_header in
   let lexbuf = Lexing.from_string response_text in
   let body = Buffer.create 32 in
   let rec parse ~status ~headers =
     match HRL.parse_response lexbuf with
-    | HRL.STATUS_LINE s -> parse ~status:(Some s) ~headers
+    | HRL.STATUS_LINE s ->
+      parse ~status:(Some s) ~headers
+
     | HRL.HEADER (name, value) ->
-        let header = HD.make ~name ~value in
-        let headers = header :: headers in
-        parse ~status ~headers
-    | HRL.CRLF          -> parse ~status          ~headers
-    | HRL.BODY_PART   b ->
-      begin
-        Buffer.add_char body b;
-        parse ~status ~headers
-      end
+      let headers = (Httpc_header.make ~name ~value) :: headers in
+      parse ~status ~headers
+
+    | HRL.CRLF ->
+      parse ~status ~headers
+
+    | HRL.BODY_PART b ->
+      ( Buffer.add_char body b
+      ; parse ~status ~headers
+      )
+
     | HRL.EOF ->
       status , headers , (Buffer.contents body)
   in
@@ -32,7 +36,9 @@ let parse response_text =
 
 let of_string s =
   match parse s with
-  | None            ,       _,    _ -> assert false
+  | None, _, _ ->
+    assert false
+
   | (Some (v, c, r)), headers, body ->
     { http_vsn      = v
     ; status_code   = c
