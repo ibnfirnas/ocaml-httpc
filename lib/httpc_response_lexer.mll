@@ -7,26 +7,26 @@
 }
 
 
-let digit = ['0'-'9']
-let num = digit+
-let alpha_upper = ['A'-'Z']
-let alpha_lower = ['a'-'z']
-let alpha = alpha_upper | alpha_lower
-let slash_fwd = '/'
-let dash = '-'
-let colon = ':'
-let dot = '.'
-let sp = ' '
-let cr = '\r'
-let lf = '\n'
-let crlf = cr lf
-let text = [^ '\r' '\n']+
-
-let http_version = "HTTP" slash_fwd digit dot digit
-let status_code = digit digit digit
+let digit         = ['0'-'9']
+let num           = digit+
+let alpha_upper   = ['A'-'Z']
+let alpha_lower   = ['a'-'z']
+let alpha         = alpha_upper
+                  | alpha_lower
+let slash_fwd     = '/'
+let dash          = '-'
+let colon         = ':'
+let dot           = '.'
+let sp            = ' '
+let cr            = '\r'
+let lf            = '\n'
+let crlf          = cr lf
+let text          = [^ '\r' '\n']+
+let http_version  = "HTTP" slash_fwd digit dot digit
+let status_code   = digit digit digit
 let reason_phrase = text
-let header_name = (alpha | dash)+
-let header_value = text
+let header_name   = ( alpha | dash )+
+let header_value  = text
 
 rule parse_response = parse
   | eof
