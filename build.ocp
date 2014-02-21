@@ -1,0 +1,43 @@
+sort     = true
+cflags   = "-w +A"
+requires =
+[
+    "str"
+    "unix"
+]
+
+begin library "httpc"
+    has_byte = true
+    has_asm  = true
+    files =
+    [
+        "lib/httpc_uri.mli"
+        "lib/httpc_uri.ml"
+        "lib/httpc_response_lexer.mli"
+        "lib/httpc_response_lexer.mll"
+        "lib/httpc_response.mli"
+        "lib/httpc_response.ml"
+        "lib/httpc_request.mli"
+        "lib/httpc_request.ml"
+        "lib/httpc_protocol.mli"
+        "lib/httpc_protocol.ml"
+        "lib/httpc_process.mli"
+        "lib/httpc_process.ml"
+        "lib/httpc_method.mli"
+        "lib/httpc_method.ml"
+        "lib/httpc_header.mli"
+        "lib/httpc_header.ml"
+        "lib/httpc.ml"
+    ]
+end
+
+
+begin
+    requires += [ "httpc" ]
+    has_byte  = true
+    has_asm   = false
+
+    begin program "httpc_example"
+        files = [ "examples/httpc_example.ml" ]
+    end
+end

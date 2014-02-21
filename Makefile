@@ -1,32 +1,44 @@
-EXE_TYPE := byte
-EXE_NAME := httpc_example
-PACKAGES := str,unix
+PROGRAMS := \
+	httpc_example
 
-.PHONY: \
+DIR_BUILD := _obuild
+DIR_SRC   := lib
+
+
+# TODO: Test a cross-platform way of grabbing number of CPUs
+MAX_BUILD_WORKERS := $(shell sysctl -n hw.ncpu)
+
+
+.PHONY:\
 	build \
-	make_bin \
 	clean \
-	clean_bin \
-	clean_manually
+	deps \
+	programs \
+	purge
 
-build: make_bin
-	@ocamlbuild \
-		-cflags '-w +A' \
-		-I examples \
-		-I lib \
-		-use-ocamlfind \
-		-package $(PACKAGES) \
-		$(EXE_NAME).$(EXE_TYPE)
-	@cp _build/examples/$(EXE_NAME).$(EXE_TYPE) bin/$(EXE_NAME)
-	@rm $(EXE_NAME).$(EXE_TYPE)
 
-make_bin:
+programs: build bin
+	@for p in $(PROGRAMS); do \
+		src="$(DIR_BUILD)/$$p/$$p.byte" ; \
+		dst="bin/$$p" ; \
+		cp $$src $$dst ; \
+	done
+
+bin:
 	@mkdir -p bin
 
+build: ocp-build.root
+	@ocp-build build -njobs $(MAX_BUILD_WORKERS)
+
+ocp-build.root:
+	@ocp-build -init -njobs $(MAX_BUILD_WORKERS)
+
 clean: clean_bin
-	@ocamlbuild -clean
+	@ocp-build clean
+	@rm -f ocp-build.root*
 
 clean_manually: clean_bin
+	@rm -rf $(DIR_BUILD)
 	@find \
 		. \
 			-name '*.o' \
