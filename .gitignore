@@ -1,5 +1,6 @@
 _obuild/
 bin/
+doc/api/
 ocp-build.root*
 *.cmi
 *.cmo

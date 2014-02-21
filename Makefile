@@ -1,6 +1,9 @@
 PROGRAMS := \
 	httpc_example
 
+DOC_FORMAT := html
+
+DIR_DOC   := doc/api/$(DOC_FORMAT)
 DIR_BUILD := _obuild
 DIR_SRC   := lib
 
@@ -13,6 +16,8 @@ MAX_BUILD_WORKERS := $(shell sysctl -n hw.ncpu)
 	build \
 	clean \
 	deps \
+	doc \
+	doc_httpc \
 	programs \
 	purge
 
@@ -32,6 +37,18 @@ build: ocp-build.root
 
 ocp-build.root:
 	@ocp-build -init -njobs $(MAX_BUILD_WORKERS)
+
+doc: doc_httpc
+
+doc_httpc: $(DIR_DOC) build
+	@ocamlfind ocamldoc \
+		-d $(DIR_DOC) \
+		-$(DOC_FORMAT) \
+		-I $(DIR_BUILD)/httpc \
+		$(DIR_SRC)/*.ml
+
+$(DIR_DOC):
+	@mkdir -p $(DIR_DOC)
 
 clean: clean_bin
 	@ocp-build clean
